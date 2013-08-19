@@ -5,15 +5,15 @@ import com.espertech.esper.epl.agg.aggregator.AggregationMethod;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Percentile implements AggregationMethod {
+public class Percentiles implements AggregationMethod {
   private static int initSize = 100000;
 
   private ArrayList<Double> valueList;
-  private Integer target;
+  private Integer[] targets;
 
-  private Double last;
+  private Double[] last;
 
-  public Percentile() {
+  public Percentiles() {
     valueList = null;
     last = null;
   }
@@ -23,7 +23,7 @@ public class Percentile implements AggregationMethod {
   }
 
   public Class getValueType() {
-    return Double.class;
+    return Double[].class;
   }
 
   public Double convertValue(Object v) {
@@ -45,7 +45,7 @@ public class Percentile implements AggregationMethod {
 
     Object[] objs = (Object[]) value;
     if (valueList == null) {
-      target = (Integer) objs[1];
+      targets = (Integer[]) objs[1];
       valueList = new ArrayList<Double>(initSize);
     }
 
@@ -70,6 +70,7 @@ public class Percentile implements AggregationMethod {
     if (valueList.size() == 0)
       return last;
 
+    ArrayList<Double> percentiles = new ArrayList<Double>(targets.length);
     Double[] values = (Double[]) valueList.toArray(new Double[]{});
 
     // for thread safety
@@ -78,7 +79,12 @@ public class Percentile implements AggregationMethod {
 
     java.util.Arrays.sort(values);
     int size = values.length;
-    last = values[size * target / 100];
+
+    for (int i = 0 ; i < targets.length ; i += 1) {
+      percentiles.add(values[size * targets[i] / 100]);
+    }
+
+    last = (Double[]) percentiles.toArray(new Double[]{});
     return last;
   }
 
