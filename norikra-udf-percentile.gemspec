@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = "norikra-udf-percentile"
-  spec.version       = "0.0.1"
+  spec.version       = "0.0.2"
   spec.authors       = ["TAGOMORI Satoshi"]
   spec.email         = ["tagomoris@gmail.com"]
   spec.description   = %q{This plugin adds functions named percentile/percentiles, which calculate percentile for specified fields}
