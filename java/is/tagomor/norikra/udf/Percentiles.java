@@ -3,6 +3,7 @@ package is.tagomor.norikra.udf;
 import com.espertech.esper.epl.agg.aggregator.AggregationMethod;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class Percentiles implements AggregationMethod {
@@ -11,7 +12,7 @@ public class Percentiles implements AggregationMethod {
   private ArrayList<Double> valueList;
   private Integer[] targets;
 
-  private Double[] last;
+  private HashMap<String,Double> last;
 
   public Percentiles() {
     valueList = null;
@@ -23,7 +24,7 @@ public class Percentiles implements AggregationMethod {
   }
 
   public Class getValueType() {
-    return Double[].class;
+    return HashMap.class;
   }
 
   public Double convertValue(Object v) {
@@ -70,9 +71,9 @@ public class Percentiles implements AggregationMethod {
     if (valueList.size() == 0)
       return last;
 
-    ArrayList<Double> percentiles = new ArrayList<Double>(targets.length);
-    Double[] values = (Double[]) valueList.toArray(new Double[]{});
+    HashMap<String,Double> result = new HashMap<String,Double>(); // initial capacity 16, load factor 0.75
 
+    Double[] values = (Double[]) valueList.toArray(new Double[]{});
     // for thread safety
     if (values.length == 0)
       return last;
@@ -81,10 +82,10 @@ public class Percentiles implements AggregationMethod {
     int size = values.length;
 
     for (int i = 0 ; i < targets.length ; i += 1) {
-      percentiles.add(values[size * targets[i] / 100]);
+      result.put(targets[i].toString(), values[size * targets[i] / 100]);
     }
 
-    last = (Double[]) percentiles.toArray(new Double[]{});
+    last = result;
     return last;
   }
 

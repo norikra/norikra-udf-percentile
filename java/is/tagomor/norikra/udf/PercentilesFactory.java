@@ -4,7 +4,7 @@ import com.espertech.esper.client.hook.AggregationFunctionFactory;
 import com.espertech.esper.epl.agg.service.AggregationValidationContext;
 import com.espertech.esper.epl.agg.aggregator.AggregationMethod;
 
-// import java.util.Map;
+import java.util.HashMap;
 
 public class PercentilesFactory implements AggregationFunctionFactory {
   public void setFunctionName(String functionName) {
@@ -40,7 +40,7 @@ public class PercentilesFactory implements AggregationFunctionFactory {
     of any values produced by the aggregation function:
    */
   public Class getValueType() {
-    return Double[].class;
+    return HashMap.class;
   }
 
   /*
